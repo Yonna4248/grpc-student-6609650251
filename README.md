@@ -7,31 +7,31 @@ Task1:Add ListStudent RPC
 
 เพิ่ม RPC ใน service และ เพิ่ม messages:
 
-service StudentService {
+    service StudentService {
 
-  rpc GetStudent (StudentRequest) returns (StudentResponse);
+      rpc GetStudent (StudentRequest) returns (StudentResponse);
   
-  rpc ListStudents (Empty) returns (StudentListResponse); // เพิ่ม
+      rpc ListStudents (Empty) returns (StudentListResponse); // เพิ่ม
   
-}
+    }
 
-message Empty {}
+    message Empty {}
 
-message StudentListResponse {
+    message StudentListResponse {
 
-  repeated StudentResponse student = 1;
+      repeated StudentResponse student = 1;
   
-}
+    }
 
 2.Regenerate code
 
-protoc --go_out=. --go-grpc_out=. proto/student.proto
+    protoc --go_out=. --go-grpc_out=. proto/student.proto
 
 3.แก้ server/server.go
 
-func (s *server) ListStudents(ctx context.Context, req *pb.Empty) (*pb.StudentListResponse, error) {
+    func (s *server) ListStudents(ctx context.Context, req *pb.Empty) (*pb.StudentListResponse, error) {
 
-    students := []*pb.StudentResponse{
+     students := []*pb.StudentResponse{
     
         {Id: 1, Name: "Alice Johnson", Major: "Computer Science", Email: "alice@university.com"},
         
@@ -49,21 +49,21 @@ func (s *server) ListStudents(ctx context.Context, req *pb.Empty) (*pb.StudentLi
 
 เพิ่มการเรียก ListStudents:
 
-listRes, err := client.ListStudents(ctx, &pb.Empty{})
+    listRes, err := client.ListStudents(ctx, &pb.Empty{})
 
-if err != nil {
+    if err != nil {
 
     log.Fatalf("Error calling ListStudents: %v", err)
     
-}
+    }
 
-log.Printf("=== ListStudents ===")
+    log.Printf("=== ListStudents ===")
 
-for _, s := range listRes.Student {
+    for _, s := range listRes.Student {
 
     log.Printf("ID: %d | Name: %s | Major: %s | Email: %s", s.Id, s.Name, s.Major, s.Email)
     
-}
+    }
 
 Task2: Add Phone Field
 
@@ -71,23 +71,23 @@ Task2: Add Phone Field
 
 เพิ่ม field phone ใน StudentResponse:
 
-message StudentResponse {
+    message StudentResponse {
 
-  int32  id    = 1;
+      int32  id    = 1;
   
-  string name  = 2;
+      string name  = 2;
   
-  string major = 3;
+      string major = 3;
+      
+      string email = 4;
+      
+      string phone = 5; // เพิ่ม
   
-  string email = 4;
-  
-  string phone = 5; // เพิ่ม
-  
-}
+    }
 
 2.Regenerate code
 
-protoc --go_out=. --go-grpc_out=. proto/student.proto
+    protoc --go_out=. --go-grpc_out=. proto/student.proto
 
 3.แก้ server/server.go
 
@@ -95,7 +95,7 @@ protoc --go_out=. --go-grpc_out=. proto/student.proto
 
 // GetStudent
 
-return &pb.StudentResponse{
+    return &pb.StudentResponse{
 
     Id:    req.Id,
     
@@ -107,29 +107,29 @@ return &pb.StudentResponse{
     
     Phone: "081-111-1111", // เพิ่ม
     
-}, nil
+    }, nil
 
 // ListStudents
 
-{Id: 1, Name: "Alice Johnson", Major: "Computer Science", Email: "alice@university.com", Phone: "087-111-1111"},
+    {Id: 1, Name: "Alice Johnson", Major: "Computer Science", Email: "alice@university.com", Phone: "087-111-1111"},
 
-{Id: 2, Name: "Bob Smith",     Major: "Mathematics",      Email: "bob@university.com",   Phone: "089-111-2222"},
+    {Id: 2, Name: "Bob Smith",     Major: "Mathematics",      Email: "bob@university.com",   Phone: "089-111-2222"},
 
-{Id: 3, Name: "Charlie Brown", Major: "Physics",          Email: "charlie@university.com", Phone: "088-111-3333"},
+    {Id: 3, Name: "Charlie Brown", Major: "Physics",          Email: "charlie@university.com", Phone: "088-111-3333"},
 
 
 4.แก้ client/client.go
 
 เพิ่ม print Phone:
 
-// GetStudent
+    // GetStudent
 
-log.Printf("Phone: %s", res.Phone)
+    log.Printf("Phone: %s", res.Phone)
 
-// ListStudents
+    // ListStudents
 
 
-log.Printf("ID: %d | Name: %s | Major: %s | Email: %s | Phone: %s",
+    log.Printf("ID: %d | Name: %s | Major: %s | Email: %s | Phone: %s",
 
     s.Id, s.Name, s.Major, s.Email, s.Phone)
   
@@ -137,15 +137,15 @@ log.Printf("ID: %d | Name: %s | Major: %s | Email: %s | Phone: %s",
 
 Terminal 1 -server
 
-go run server/server.go
+    go run server/server.go
 
 เปิดอีก terminal
 
 Terminal 2 - client
 
-go run client/client.go
+    go run client/client.go
 
-ตัวอย่างหลังจากใช้ go run client/client.go
+ตัวอย่างหลังจากใช้  go run client/client.go
 
 PS D:\grpc-student-6609650251\grpc-student-6609650251\grpc-student> go run client/client.go
 
